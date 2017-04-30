@@ -25,16 +25,26 @@ PredictiveParser::~PredictiveParser() {
 }
 
 /*  */
-bool PredictiveParser::validateCode(string codeFileName) {
-    ifstream inFile(codeFileName);
-    string line{""};
+bool PredictiveParser::validateCode(string filename) {
+    ifstream inFile(filename);
+    string line{""}, inputString{""};
     while(!inFile.eof()){
-        getline(inFile, line);
-        if(!trace(line)){
-            return false;
-        }
+        inFile >> line;
+        if(line == "PROGRAM")
+            inputString += "r";
+        else if(line == "BEGIN")
+            inputString += "b";
+        else if(line == "PRINT")
+            inputString += "p";
+        else if(line == "END.")
+            inputString += "e";
+        else
+            inputString += line;
     }
-    return true;
+
+    if(trace(inputString))
+        return true;
+    return false;
 }
 
 /* Loads dictionary with both terminal and non-terminal characters. The value to each terminal/non-terminal
@@ -53,24 +63,26 @@ void PredictiveParser::loadGrammarDict(string charFileName){
 /* Checks if an input string is a valid expression. */
 bool PredictiveParser::trace(string inputString){
     stack<char> stack;
-    stack.push('$');
-    stack.push('E');
+    stack.push('e');
+    stack.push('A');
 
     int  indexInputString = 0;
     char currentChar      = inputString[indexInputString]; // Read initial character
-    int  symbolIndex      = getStateIndex(currentChar);
+    int  symbolIndex      = grammarDict.at(currentChar);
 
     while(!stack.empty()){
 
         char top = stack.top();
-        int topIndex  = getStateIndex(stack.top());
+        int topIndex  = grammarDict.at(top);
         stack.pop();
 
         if(top == currentChar) {
-            if(currentChar == '$') // if the match is a $, we know the input string is valid
+            if(currentChar == 'e') // if the match is a $, we know the input string is valid
                 return true;
             currentChar = inputString[++indexInputString];
-            symbolIndex = getStateIndex(currentChar);
+            while(currentChar == ' ' || currentChar == '\n')
+                currentChar = inputString[++indexInputString];
+            symbolIndex = grammarDict.at(currentChar);
         }
         else{
             // Grab value from table
@@ -80,6 +92,7 @@ bool PredictiveParser::trace(string inputString){
                 if(tableValue == "n") // n stands for 'no value'. If n is found, then the input string is invalid.
                     return false;
                 else {
+                    // push states to stack
                     for (int i = tableValue.length() - 1; i >= 0; i--)
                         stack.push(tableValue[i]);
                 }
@@ -102,9 +115,3 @@ void PredictiveParser::loadTable(string parsingTableFileName){
 
     inFile.close();
 }
-
-/* Returns table index for either a row or column character. */
-int PredictiveParser::getStateIndex(char state){
-    return grammarDict.at(state);
-}
-

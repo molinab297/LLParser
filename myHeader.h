@@ -4,6 +4,7 @@
 #include <regex>
 #include <string>
 #include "cleanFile.h"
+#include "PredictiveParser.h"
 using namespace std;
 
 //Purpose: Accepts an input file then uses the passed in regular expression to iterate through regex matches and
