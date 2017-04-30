@@ -16,7 +16,6 @@ PredictiveParser::PredictiveParser(int rows, int columns, string terminalsFileNa
     loadGrammarDict(nonterminalsFileName);
 }
 
-/* Class destructor: Frees memory from 2d string array */
 PredictiveParser::~PredictiveParser() {
     for(int i = 0; i < rows; i++){
         delete []table[i];
@@ -24,18 +23,18 @@ PredictiveParser::~PredictiveParser() {
     delete []table;
 }
 
-/*  */
 bool PredictiveParser::validateCode(string filename) {
     ifstream inFile(filename);
     string line{""}, inputString{""};
-    while(!inFile.eof()){
-        inFile >> line;
+    while(inFile >> line){
         if(line == "PROGRAM")
             inputString += "r";
         else if(line == "BEGIN")
             inputString += "b";
         else if(line == "PRINT")
             inputString += "p";
+        else if(line == "INTEGER")
+            inputString += "i";
         else if(line == "END.")
             inputString += "e";
         else
@@ -68,21 +67,19 @@ bool PredictiveParser::trace(string inputString){
 
     int  indexInputString = 0;
     char currentChar      = inputString[indexInputString]; // Read initial character
-    int  symbolIndex      = grammarDict.at(currentChar);
+    int  symbolIndex      = getState(currentChar);
 
     while(!stack.empty()){
 
         char top = stack.top();
-        int topIndex  = grammarDict.at(top);
+        int topIndex  = getState(top);
         stack.pop();
 
         if(top == currentChar) {
             if(currentChar == 'e') // if the match is a $, we know the input string is valid
                 return true;
             currentChar = inputString[++indexInputString];
-            while(currentChar == ' ' || currentChar == '\n')
-                currentChar = inputString[++indexInputString];
-            symbolIndex = grammarDict.at(currentChar);
+            symbolIndex = getState(currentChar);
         }
         else{
             // Grab value from table
