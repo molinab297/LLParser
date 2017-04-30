@@ -1,5 +1,6 @@
 # finalproject-compilers
 
-Matt Corrente
-Blake Molina
+Members:\n
+Matt Corrente\n
+Blake Molina\n
 Amado Flores
