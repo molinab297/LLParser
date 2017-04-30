@@ -1,6 +1,8 @@
 # finalproject-compilers
 
-Members:\n
-Matt Corrente\n
-Blake Molina\n
-Amado Flores
+Members:
+- Arman Jafarinia
+- Blake Molina (Product Owner)
+- Ryan Nguyen
+- Stephen Lastimosa
+- Xavier Lian (Scrum Master)
