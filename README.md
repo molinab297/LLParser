@@ -1,8 +1,6 @@
-# finalproject-compilers
+# Final Project - Compilers CPSC 323 
 
 Members:
-- Arman Jafarinia
-- Blake Molina (Product Owner)
-- Ryan Nguyen
-- Stephen Lastimosa
-- Xavier Lian (Scrum Master)
+- Matt Corrente
+- Blake Molina
+- Amado Flores
