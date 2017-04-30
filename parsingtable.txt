@@ -1,0 +1,22 @@
+r n n n n n n n n n n n n n n n n n n n n n n n n n n n n n
+n n n n n VC VC VC VC n n n n n n n n n n n n n n n n n n n n n
+n n n n n VC VC VC VC l l l l n l l n l l n UC UC UC UC UC UC UC UC UC UC
+n F:E; n n n n n n n n n n n n n n n n n n n n n n n n n n n n n
+n n n n n BX BX BX BX n n n n n n n n n n n n n n n n n n n n n
+n i n n n n n n n n n n n n n n n n n n n n n n n n n n n n
+n n HY n n HY HY HY HY n n n n n n n n n n n n n n n n n n n n n
+n n I n n J J J J n n n n n n n n n n n n n n n n n n n n n
+n n PRINT(B); n n n n n n n n n n n n n n n n n n n n n n n n n n n
+n n n n n B=K; B=K; B=K; B=K; n n n n n n n n n n n n n n n n n n n n n n
+n n n n n LZ LZ LZ LZ LZ LZ n n LZ n n n n n n LZ LZ LZ LZ LZ LZ LZ LZ LZ LZ
+n n n n n M@ M@ M@ M@ M@ M@ n n M@ n n n n n n M@ M@ M@ M@ M@ M@ M@ M@ M@ M@
+n n n n n n n n n l l *M@ /M@ n l n n l n n n n n n n n n n n n
+n n n n n B B B B N N n n (K) n n n n n n N N N N N N N N N N
+n n n n n n n n n OUT OUT n n n n n n n n n OUT OUT OUT OUT OUT OUT OUT OUT OUT OUT
+n n n n n n n n n + - n n n n n n n n n l l l l l l l l l l
+n n n n n n n n n l l l l n l n n l n n UT UT UT UT UT UT UT UT UT UT
+n n n n n n n n n n n n n n n n n n n n 0 1 2 3 4 5 6 7 8 9
+n n n n n P Q R S n n n n n n n n n n n n n n n n n n n n n
+n n n n n n n n n n n n n n n n n l ,E n n n n n n n n n n n
+n n G n l G G G G n n n n n n n n n n n n n n n n n n n n n
+n n n n n n n n n +K -K n n n l n n l n n n n n n n n n n n n
