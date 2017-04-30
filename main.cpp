@@ -3,11 +3,11 @@
 int main() {
 
     const int NUM_ROWS{22}, NUM_COLS{30};
-    const string PARSING_TABLE_FILE = "parsingtable.txt";
-    const string TERMINALS_FILE = "terminals.txt";
-    const string NONTERMINALS_FILE = "nonterminals.txt";
-    const string INPUT_FILE = "finalv1.txt"; //original input file
-    const string CLEAN_FILE = "finalv2.txt"; //cleaned input file ready for parsing
+    const string PARSING_TABLE_FILE = "resources/parsingtable.txt";
+    const string TERMINALS_FILE = "resources/terminals.txt";
+    const string NONTERMINALS_FILE = "resources/nonterminals.txt";
+    const string INPUT_FILE = "resources/finalv1.txt"; //original input file
+    const string CLEAN_FILE = "resources/finalv2.txt"; //cleaned input file ready for parsing
     const regex REGULAR_EXPRESSION("END[.]|[/][/].*\n?|[0-9]+|[a-zA-Z]+[0-9]*[a-zA-Z]*|[*/+-=,()]"); //regular expression that cleans the input file according to rules of established language
 
     //output clean version of original input file to new file
