@@ -41,12 +41,13 @@ void cleanFile(string inputFile, string outputFile, regex regexExpression){
     oFile << ' ';
 
     //loop through regex iterator and output with 1 space before
-    //and after each token and new lines after each semi colon
+    //and after each token and new lines after each semi colon or
+    //BEGIN statement
     while(rit != rend){
 
         if(rit->str()[0] != '/')
             oFile << rit->str() << ' ';
-        if(rit->str() == ";")
+        if(rit->str() == ";" || rit->str() == "BEGIN")
             oFile << endl << ' ';
         rit++;
     }
