@@ -5,6 +5,7 @@
 #include <stack>
 #include <fstream>
 #include <unordered_map>
+#include <regex>
 using namespace std;
 
 
@@ -18,14 +19,6 @@ private:
     void loadGrammarDict(string charFileName);
     void loadTable(string parsingTableFileName);
     bool trace(string inputString);
-    int getState(char c){
-        if(grammarDict.find(c) == grammarDict.end()){
-            cout << c;
-        }
-        else{
-            return grammarDict.at(c);
-        }
-    }
 
     string **table;
     int rows;

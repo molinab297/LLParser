@@ -38,11 +38,25 @@ bool PredictiveParser::validateCode(string filename) {
         else if(line == "END.")
             inputString += "e";
         else
-            inputString += line;
+            inputString += (line + " ");
     }
 
-    if(trace(inputString))
-        return true;
+    cout << inputString << endl;
+    // Make sure that PROGRAM, BEGIN, and END. are present before tracing
+    try {
+        if (!std::regex_match(inputString, std::regex("(r)(.*)")))
+            throw "PROGRAM is expected";
+        if (!std::regex_match(inputString, std::regex("(.*)(b)(.*)")))
+            throw "BEGIN is expected";
+        if (!std::regex_match(inputString, std::regex("(.*)(e)")))
+            throw "END. is expected";
+
+        if(trace(inputString))
+            return true;
+    }
+    catch(char const* ERROR){
+        cout << ERROR;
+    }
     return false;
 }
 
@@ -67,27 +81,37 @@ bool PredictiveParser::trace(string inputString){
 
     int  indexInputString = 0;
     char currentChar      = inputString[indexInputString]; // Read initial character
-    int  symbolIndex      = getState(currentChar);
+    int  symbolIndex      = grammarDict.at(currentChar);
 
     while(!stack.empty()){
 
         char top = stack.top();
-        int topIndex  = getState(top);
+        int topIndex  = grammarDict.at(top);
         stack.pop();
 
         if(top == currentChar) {
             if(currentChar == 'e') // if the match is a $, we know the input string is valid
                 return true;
             currentChar = inputString[++indexInputString];
-            symbolIndex = getState(currentChar);
+            if(currentChar == ' ')
+                currentChar = inputString[++indexInputString];
+            symbolIndex = grammarDict.at(currentChar);
         }
         else{
             // Grab value from table
             string tableValue = table[topIndex][symbolIndex];
 
             if(tableValue != "l") { // If lambda, don't push.
-                if(tableValue == "n") // n stands for 'no value'. If n is found, then the input string is invalid.
+                if(tableValue == "n") { // n stands for 'no value'. If n is found, then the input string is invalid.
+                    cout << currentChar << endl;
+                    // INTEGER expected case
+                    if(currentChar == ':')
+                        cout << "\nINTEGER is expected";
+                    else
+                        cout << "\n; is expected";
+
                     return false;
+                }
                 else {
                     // push states to stack
                     for (int i = tableValue.length() - 1; i >= 0; i--)
@@ -101,7 +125,6 @@ bool PredictiveParser::trace(string inputString){
 
 /* Loads a 2d array of strings from an input file. */
 void PredictiveParser::loadTable(string parsingTableFileName){
-
     ifstream inFile;
     inFile.open(parsingTableFileName);
 
@@ -109,6 +132,5 @@ void PredictiveParser::loadTable(string parsingTableFileName){
         for(int j = 0; j < columns; j++)
             inFile >> table[i][j];
     }
-
     inFile.close();
 }
