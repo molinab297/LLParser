@@ -25,7 +25,12 @@ PredictiveParser::~PredictiveParser() {
 
 bool PredictiveParser::validateCode(string filename) {
     ifstream inFile(filename);
-    string line{""}, inputString{""};
+    string line{""};
+    string inputString{""};
+    string temp{""};
+    std::regex variableMatch("[^ribp][P-S]+[0-9]*[P-S]*"); // Expression to match any identifier
+    std::unordered_set<string> identifierSet; 
+
     while(inFile >> line){
         if(line == "PROGRAM")
             inputString += "r";
@@ -33,15 +38,31 @@ bool PredictiveParser::validateCode(string filename) {
             inputString += "b";
         else if(line == "PRINT")
             inputString += "p";
-        else if(line == "INTEGER")
+        else if(line == "INTEGER") {
             inputString += "i";
+            getline(inFile, line);
+            temp = line;
+            inputString += (line + " ");
+        }
         else if(line == "END.")
             inputString += "e";
         else
             inputString += (line + " ");
     }
 
-    cout << inputString << endl;
+    /* Look for any unknown identifiers before parsing */
+    // Push initial identifiers to set
+    for(std::sregex_iterator i = std::sregex_iterator(temp.begin(), temp.end(), variableMatch); i != std::sregex_iterator(); ++i) {
+        std::smatch m = *i;
+        identifierSet.insert(m.str());
+    }
+    // Scan entire input string, display error if any unknown identifiers
+    for(std::sregex_iterator i = std::sregex_iterator(inputString.begin(), inputString.end(), variableMatch); i != std::sregex_iterator(); ++i) {
+        std::smatch m = *i;
+        if(identifierSet.find(m.str()) == identifierSet.end())
+            cout << "\nUnknown identifier";
+    }
+
     // Make sure that PROGRAM, BEGIN, and END. are present before tracing
     try {
         if (!std::regex_match(inputString, std::regex("(r)(.*)")))
@@ -51,6 +72,7 @@ bool PredictiveParser::validateCode(string filename) {
         if (!std::regex_match(inputString, std::regex("(.*)(e)")))
             throw "END. is expected";
 
+        // Pre-parsing complete. Begin parsing using Predictive Table
         if(trace(inputString))
             return true;
     }
@@ -93,8 +115,9 @@ bool PredictiveParser::trace(string inputString){
             if(currentChar == 'e') // if the match is a $, we know the input string is valid
                 return true;
             currentChar = inputString[++indexInputString];
-            if(currentChar == ' ')
+            if(currentChar == ' ') {
                 currentChar = inputString[++indexInputString];
+            }
             symbolIndex = grammarDict.at(currentChar);
         }
         else{
@@ -103,12 +126,18 @@ bool PredictiveParser::trace(string inputString){
 
             if(tableValue != "l") { // If lambda, don't push.
                 if(tableValue == "n") { // n stands for 'no value'. If n is found, then the input string is invalid.
-                    cout << currentChar << endl;
+                    cout << "read: " << currentChar << endl << "Top: " << top;
                     // INTEGER expected case
                     if(currentChar == ':')
                         cout << "\nINTEGER is expected";
-                    else
-                        cout << "\n; is expected";
+                    else if(top == ':')
+                        cout << "\n: is missing";
+                    else if(top == ')')
+                        cout << "\n) is missing";
+                    else if(top == '(')
+                        cout << "\n( is missing";
+                    else if(currentChar == ')')
+                        cout << "\n( is missing";
 
                     return false;
                 }

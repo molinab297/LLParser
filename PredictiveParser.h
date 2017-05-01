@@ -5,6 +5,7 @@
 #include <stack>
 #include <fstream>
 #include <unordered_map>
+#include <unordered_set>
 #include <regex>
 using namespace std;
 
@@ -18,6 +19,7 @@ public:
 private:
     void loadGrammarDict(string charFileName);
     void loadTable(string parsingTableFileName);
+
     bool trace(string inputString);
 
     string **table;
