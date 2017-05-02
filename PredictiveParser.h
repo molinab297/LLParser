@@ -17,15 +17,19 @@ public:
     bool validateCode(string codeFileName);
 
 private:
-    void loadGrammarDict(string charFileName);
+    void loadGrammarDict(string charFileName, std::unordered_map<char,int> &map);
     void loadTable(string parsingTableFileName);
-
+    void printStackContents(stack<char> stack);
+    int  getRowIndex(char key);
+    int  getColIndex(char key);
     bool trace(string inputString);
 
     string **table;
     int rows;
     int columns;
-    std::unordered_map<char,int> grammarDict;
+    std::unordered_map<char,int> rowDict;
+    std::unordered_map<char,int> colDict;
+
 };
 
 

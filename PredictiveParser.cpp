@@ -12,8 +12,8 @@ PredictiveParser::PredictiveParser(int rows, int columns, string terminalsFileNa
 
     // load array with parsing table & grammar dictionary
     loadTable(parsingTableName);
-    loadGrammarDict(terminalsFileName);
-    loadGrammarDict(nonterminalsFileName);
+    loadGrammarDict(terminalsFileName, colDict);
+    loadGrammarDict(nonterminalsFileName, rowDict);
 }
 
 PredictiveParser::~PredictiveParser() {
@@ -31,6 +31,7 @@ bool PredictiveParser::validateCode(string filename) {
     std::regex variableMatch("[^ribp][P-S]+[0-9]*[P-S]*"); // Expression to match any identifier
     std::unordered_set<string> identifierSet;
 
+    // Convert PROGRAM, BEGIN, PRINT, INTEGER to r, b, p, i
     while(inFile >> line){
         if(line == "PROGRAM")
             inputString += "r";
@@ -45,8 +46,6 @@ bool PredictiveParser::validateCode(string filename) {
         else
             inputString += line;
     }
-
-    cout << "Input String: " << inputString << endl;
 
     // Make sure that PROGRAM, BEGIN, and END. are present before tracing
     try {
@@ -69,15 +68,25 @@ bool PredictiveParser::validateCode(string filename) {
 
 /* Loads dictionary with both terminal and non-terminal characters. The value to each terminal/non-terminal
  * character in the dictionary is the corresponding row or column of that character. */
-void PredictiveParser::loadGrammarDict(string charFileName){
+void PredictiveParser::loadGrammarDict(string charFileName, std::unordered_map<char,int> &map){
     ifstream inFile(charFileName);
     int index = 0;
     char c;
     while(!inFile.eof()){
         inFile >> c;
-        grammarDict.insert(grammarDict.begin(), std::make_pair(c, index));
+        map.insert(map.begin(), std::make_pair(c, index));
         index++;
     }
+}
+
+void PredictiveParser::printStackContents(stack<char> stack){
+    cout << "Stack: ";
+    while(!stack.empty()){
+        char curr = stack.top();
+        stack.pop();
+        cout << curr << " ";
+    }
+    cout << endl << endl;
 }
 
 /* Checks if an input string is a valid expression. */
@@ -88,19 +97,19 @@ bool PredictiveParser::trace(string inputString){
 
     int  indexInputString = 0;
     char currentChar      = inputString[indexInputString]; // Read initial character
-    int  symbolIndex      = grammarDict.at(currentChar);
+    int  symbolIndex      = getColIndex(currentChar);
 
     while(!stack.empty()){
 
         char top = stack.top();
-        int topIndex  = grammarDict.at(top);
+        int topIndex  = getRowIndex(top);
         stack.pop();
 
         if(top == currentChar) {
-            if(currentChar == 'e') // if the match is a $, we know the input string is valid
+            if(currentChar == 'e') // if the match is a e, we know the input string is valid
                 return true;
             currentChar = inputString[++indexInputString];
-            symbolIndex = grammarDict.at(currentChar);
+            symbolIndex = getColIndex(currentChar);
         }
         else{
             // Grab value from table
@@ -108,7 +117,6 @@ bool PredictiveParser::trace(string inputString){
 
             if(tableValue != "l") { // If lambda, don't push.
                 if(tableValue == "n") { // n stands for 'no value'. If n is found, then the input string is invalid.
-                    cout << stack.top() << " is missing";
                     return false;
                 }
                 else {
@@ -132,4 +140,18 @@ void PredictiveParser::loadTable(string parsingTableFileName){
             inFile >> table[i][j];
     }
     inFile.close();
+}
+
+int PredictiveParser::getRowIndex(char key) {
+    std::unordered_map<char,int>::const_iterator got = rowDict.find(key);
+    if(got != rowDict.end())
+        return rowDict.at(key);
+    return -1;
+}
+
+int PredictiveParser::getColIndex(char key) {
+    std::unordered_map<char,int>::const_iterator got = colDict.find(key);
+    if(got != colDict.end())
+        return colDict.at(key);
+    return -1;
 }
