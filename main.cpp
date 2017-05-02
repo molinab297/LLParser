@@ -12,7 +12,7 @@ int main() {
 
     //output clean version of original input file to new file
     cleanFile(INPUT_FILE, CLEAN_FILE, REGULAR_EXPRESSION);
-    
+
     PredictiveParser parser(NUM_ROWS, NUM_COLS, TERMINALS_FILE, NONTERMINALS_FILE, PARSING_TABLE_FILE);
 
     if(parser.validateCode(CLEAN_FILE))

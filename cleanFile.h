@@ -46,7 +46,7 @@ void cleanFile(string inputFile, string outputFile, regex regexExpression){
 
         if(rit->str()[0] != '/')
             oFile << rit->str() << ' ';
-        if(rit->str() == ";")
+        if(rit->str() == ";" || rit->str() == "BEGIN")
             oFile << endl << ' ';
         rit++;
     }
