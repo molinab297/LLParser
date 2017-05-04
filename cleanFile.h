@@ -11,6 +11,7 @@
 #include <string>
 #include <fstream>
 #include <regex>
+#include <iostream>
 using namespace std;
 
 void cleanFile(string inputFile, string outputFile, regex regexExpression){
@@ -45,7 +46,9 @@ void cleanFile(string inputFile, string outputFile, regex regexExpression){
     //BEGIN statement
     while(rit != rend){
 
-        if(rit->str()[0] != '/')
+        std::cout << rit->str() << '\n';
+
+        if(rit->str().substr(0,2) != "//")
             oFile << rit->str() << ' ';
         if(rit->str() == ";" || rit->str() == "BEGIN")
             oFile << endl << ' ';
