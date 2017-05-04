@@ -174,10 +174,10 @@ int PredictiveParser::getColIndex(char key) {
     if(got != colDict.end()) {
         return colDict.at(key);
     }
-        //check if symbol is a letter, if so set to last col of table
-    else if(isalpha(key)) {
-        return colDict.size();
-    }
+//        //check if symbol is a letter, if so set to last col of table
+//    else{
+//        return colDict.size();
+//    }
     else
         return -1;
 }
@@ -209,6 +209,9 @@ void PredictiveParser::getErrorMessage(char key, char topStack) {
         case 'e':
             cout << "END. is expected";
         break;
+        case 'b' :
+            cout << "INTEGER is expected";
+            break;
         default:
             if(topStack == 'b'){
                 cout << "BEGIN is expected";
