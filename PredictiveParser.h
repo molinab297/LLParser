@@ -14,10 +14,10 @@ class PredictiveParser {
 public:
     PredictiveParser(int rows, int columns, string terminalsFileName, string nonterminalsFileName, string parsingTableName);
     ~PredictiveParser();
-    bool validateCode(string codeFileName);
+    bool validateCode(string inputStringFileName);
 
 private:
-    void loadGrammarDict(string charFileName, std::unordered_map<char,int> &map);
+    void loadGrammarDicts(string terminalsFileName, string nonterminalsFileName);
     void loadTable(string parsingTableFileName);
     void printStackContents(stack<char> stack);
     int  getRowIndex(char key);
@@ -29,7 +29,7 @@ private:
     int columns;
     std::unordered_map<char,int> rowDict;
     std::unordered_map<char,int> colDict;
-
+    std::unordered_map<int, string> errorCodesDict;
 };
 
 
