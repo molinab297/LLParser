@@ -10,10 +10,9 @@ PredictiveParser::PredictiveParser(int rows, int columns, string terminalsFileNa
     for(int i = 0; i < rows; i++)
         table[i] = new string[columns];
 
-    // load array with parsing table & grammar dictionary
+    // load array with parsing table & load row/column dictionaries
     loadTable(parsingTableName);
-    loadGrammarDict(terminalsFileName, colDict);
-    loadGrammarDict(nonterminalsFileName, rowDict);
+    loadGrammarDicts(terminalsFileName, nonterminalsFileName);
 }
 
 PredictiveParser::~PredictiveParser() {
@@ -23,60 +22,81 @@ PredictiveParser::~PredictiveParser() {
     delete []table;
 }
 
-bool PredictiveParser::validateCode(string filename) {
-    ifstream inFile(filename);
-    string line{""};
-    string inputString{""};
-    string temp{""};
-    std::regex variableMatch("[^ribp][P-S]+[0-9]*[P-S]*"); // Expression to match any identifier
-    std::unordered_set<string> identifierSet;
+/* Calls trace() to trace input string then performs some post-processing methods */
+bool PredictiveParser::validateCode(string inputStringFileName) {
+    std::ifstream inFile(inputStringFileName);
+    std::string inputString, line;
+    std::regex varLineMatch("i:(.*);b"), varMatch("[PQRS]+[0-9]*[PQRS]*[0-9]*");
+    std::unordered_map<string,string> reservedWords{{"BEGIN","b"},{"END.","e"},{"PRINT","p"},{"INTEGER","i"},{"PROGRAM","r"}};
 
-    // Convert PROGRAM, BEGIN, PRINT, INTEGER to r, b, p, i
+    // Converts reserved words to single letter terminals
     while(inFile >> line){
-        if(line == "PROGRAM")
-            inputString += "r";
-        else if(line == "BEGIN")
-            inputString += "b";
-        else if(line == "PRINT")
-            inputString += "p";
-        else if(line == "INTEGER")
-            inputString += "i";
-        else if(line == "END.")
-            inputString += "e";
-        else
-            inputString += line;
+        if(line=="BEGIN" || line=="END." || line=="PRINT" || line=="PROGRAM")
+            inputString += reservedWords.at(line);
+        // Special case : handles missing commas
+        else if(line == "INTEGER"){
+            string tempLine;
+            getline(inFile, tempLine);
+            int rWordCount = std::distance(std::sregex_iterator(tempLine.begin(), tempLine.end(), varMatch), std::sregex_iterator());        // count number of reserved words
+            int commaCount = std::distance(std::sregex_iterator(tempLine.begin(), tempLine.end(), std::regex(",")), std::sregex_iterator()); // count number of commas
+            if (commaCount < rWordCount-1){ // if # of commas is less than # of reserved words, output error
+                cout << "ERROR : Missing comma";
+                return false;
+            }
+            // strip white space from line and append to input string
+            tempLine.erase(remove_if(tempLine.begin(), tempLine.end(), ::isspace), tempLine.end());
+            inputString += (reservedWords.at("INTEGER") + tempLine);
+        }
+        else inputString+=line;
     }
 
-//    // Make sure that PROGRAM, BEGIN, and END. are present before tracing
-//    try {
-//        if (!std::regex_match(inputString, std::regex("(r)(.*)")))
-//            throw "PROGRAM is expected";
-//        if (!std::regex_match(inputString, std::regex("(.*)(b)(.*)")))
-//            throw "BEGIN is expected";
-//        if (!std::regex_match(inputString, std::regex("(.*)(e)")))
-//            throw "END. is expected";
-//
-//        // Pre-parsing complete. Begin parsing using Predictive Table
-        if(trace(inputString))
-            return true;
-//    }
-//    catch(char const* ERROR){
-//        cout << ERROR;
-//    }
-//    return false;
+    if(trace(inputString)) {
+
+        // Special case : handles undeclared variables
+        std::unordered_set<string> set{"S2017"};
+        std::smatch match;
+        std::string line;
+        if(regex_search(inputString,match,varLineMatch)){
+            line = match.str();
+
+            // Build set of identifiers
+            while(regex_search(line,match,varMatch)){
+                set.insert(match.str());
+                line = match.suffix().str();
+            }
+
+            // Scan input string and look for undeclared identifiers
+            while(regex_search(inputString, match, varMatch)){
+                if(set.find(match.str()) == set.end()) {
+                    cout << "ERROR : Undeclared identifier";
+                    return false;
+                }
+                inputString = match.suffix().str();
+            }
+        }
+        return true;
+    }
+    return false;
 }
 
 /* Loads dictionary with both terminal and non-terminal characters. The value to each terminal/non-terminal
  * character in the dictionary is the corresponding row or column of that character. */
-void PredictiveParser::loadGrammarDict(string charFileName, std::unordered_map<char,int> &map){
-    ifstream inFile(charFileName);
+void PredictiveParser::loadGrammarDicts(string terminalsFileName, string nonterminalsFileName){
+    ifstream inFile(terminalsFileName);
     int index = 0;
     char c;
-    while(!inFile.eof()){
-        inFile >> c;
-        map.insert(map.begin(), std::make_pair(c, index));
+    while(inFile >> c){
+        colDict.insert(colDict.begin(), std::make_pair(c, index));
         index++;
     }
+    inFile.close();
+    index = 0;
+    inFile.open(nonterminalsFileName);
+    while(inFile >> c){
+        rowDict.insert(rowDict.begin(), std::make_pair(c, index));
+        index++;
+    }
+    inFile.close();
 }
 
 void PredictiveParser::printStackContents(stack<char> stack){
@@ -117,7 +137,6 @@ bool PredictiveParser::trace(string inputString){
             symbolIndex = getColIndex(currentChar);
         }
         else{
-
                 if(topIndex == -1 || symbolIndex == -1){
                     cout << " top key is " << stack.top() << endl;
                 getErrorMessage(stack.top(), top);
