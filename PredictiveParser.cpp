@@ -26,22 +26,21 @@ PredictiveParser::~PredictiveParser() {
 bool PredictiveParser::validateCode(string inputStringFileName) {
     std::ifstream inFile(inputStringFileName);
     std::string inputString, line;
-    std::regex varLineMatch("i:(.*);b");                // match any initialized variable (including commas & semicolons)
-    std::regex varMatch("[PQRS]+[0-9]*[PQRS]*[0-9]*");  // matches any variable from varLineMatch (ignores commas & semicolons)
-    std::regex commaMatch(",");
+    std::regex varLineMatch("i:(.*);b"), varMatch("[PQRS]+[0-9]*[PQRS]*[0-9]*");
     std::unordered_map<string,string> reservedWords{{"BEGIN","b"},{"END.","e"},{"PRINT","p"},{"INTEGER","i"},{"PROGRAM","r"}};
 
     // Converts reserved words to single letter terminals
     while(inFile >> line){
         if(line=="BEGIN" || line=="END." || line=="PRINT" || line=="PROGRAM")
             inputString += reservedWords.at(line);
+        // Special case : handles missing commas
         else if(line == "INTEGER"){
             string tempLine;
             getline(inFile, tempLine);
-            int rWordCount = std::distance(std::sregex_iterator(tempLine.begin(), tempLine.end(), varMatch), std::sregex_iterator());   // count number of reserved words
-            int commaCount = std::distance(std::sregex_iterator(tempLine.begin(), tempLine.end(), commaMatch), std::sregex_iterator()); // count number of commas
+            int rWordCount = std::distance(std::sregex_iterator(tempLine.begin(), tempLine.end(), varMatch), std::sregex_iterator());        // count number of reserved words
+            int commaCount = std::distance(std::sregex_iterator(tempLine.begin(), tempLine.end(), std::regex(",")), std::sregex_iterator()); // count number of commas
             if (commaCount < rWordCount-1){ // if # of commas is less than # of reserved words, output error
-                cout << "\nMissing comma";
+                cout << "ERROR : Missing comma";
                 return false;
             }
             // strip white space from line and append to input string
@@ -53,7 +52,7 @@ bool PredictiveParser::validateCode(string inputStringFileName) {
 
     if(trace(inputString)) {
 
-        // Handles undeclared variables
+        // Special case : handles undeclared variables
         std::unordered_set<string> set{"S2017"};
         std::smatch match;
         std::string line;
@@ -69,7 +68,7 @@ bool PredictiveParser::validateCode(string inputStringFileName) {
             // Scan input string and look for undeclared identifiers
             while(regex_search(inputString, match, varMatch)){
                 if(set.find(match.str()) == set.end()) {
-                    cout << "\nUndeclared identifier";
+                    cout << "ERROR : Undeclared identifier";
                     return false;
                 }
                 inputString = match.suffix().str();
