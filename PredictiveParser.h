@@ -23,6 +23,7 @@ private:
     int  getRowIndex(char key);
     int  getColIndex(char key);
     bool trace(string inputString);
+    void getErrorMessage(char key, char topStack);
 
     string **table;
     int rows;

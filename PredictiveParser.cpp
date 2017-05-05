@@ -121,22 +121,40 @@ bool PredictiveParser::trace(string inputString){
 
     while(!stack.empty()){
 
+        printStackContents(stack);
+
         char top = stack.top();
         int topIndex  = getRowIndex(top);
         stack.pop();
 
+
         if(top == currentChar) {
-            if(currentChar == 'e') // if the match is a e, input string is valid
+            cout << "match " << currentChar << endl;
+
+            if(currentChar == 'e') // if the match is a e, we know the input string is valid
                 return true;
             currentChar = inputString[++indexInputString];
             symbolIndex = getColIndex(currentChar);
         }
         else{
+                if(topIndex == -1 || symbolIndex == -1){
+                    cout << " top key is " << stack.top() << endl;
+                getErrorMessage(stack.top(), top);
 
+                return false;
+            }
+
+            // Grab value from table
             string tableValue = table[topIndex][symbolIndex];
 
+            cout << " [" << top << "," << currentChar << "] = " << tableValue << endl;
+            cout << "top index : " << topIndex << " anddddd " <<  " symbolIndex  " << symbolIndex << endl;
+
+
             if(tableValue != "l") { // If lambda, don't push.
-                if(tableValue == "n") { // read error code and output error message
+                if(tableValue == "n") { // n stands for 'no value'. If n is found, then the input string is invalid.
+                    cout << "the key is " << stack.top() << endl;
+                    getErrorMessage(stack.top(), top);
                     return false;
                 }
                 else {
@@ -146,6 +164,7 @@ bool PredictiveParser::trace(string inputString){
                 }
             }
         }
+
     }
     return false;
 }
@@ -171,7 +190,56 @@ int PredictiveParser::getRowIndex(char key) {
 
 int PredictiveParser::getColIndex(char key) {
     std::unordered_map<char,int>::const_iterator got = colDict.find(key);
-    if(got != colDict.end())
+    if(got != colDict.end()) {
         return colDict.at(key);
-    return -1;
+    }
+//        //check if symbol is a letter, if so set to last col of table
+//    else{
+//        return colDict.size();
+//    }
+    else
+        return -1;
+}
+
+void PredictiveParser::getErrorMessage(char key, char topStack) {
+
+    switch(key){
+        case '1':
+            cout << "PROGRAM is expected";
+            break;
+        case '2':
+            cout << "INTEGER is expected";
+            break;
+        case '3':
+            cout << "Unacceptable variable name";
+            break;
+        case '4':
+            cout << "Variable is expected";
+            break;
+        case '5':
+            cout << "; is missing";
+            break;
+        case '6':
+            cout << "illegal expression";
+            break;
+        case '7':
+            cout << "invalid character";
+            break;
+        case 'e':
+            cout << "END. is expected";
+        break;
+        case 'b' :
+            cout << "INTEGER is expected";
+            break;
+        default:
+            if(topStack == 'b'){
+                cout << "BEGIN is expected";
+            }
+            else{
+                cout << " default case: ";
+                cout << topStack << " is missing";
+            }
+
+    }
+
 }
