@@ -18,7 +18,7 @@ int main() {
 
     if(parser.validateCode(CLEAN_FILE)) {
         cout << "\nReady to be translated to C++";
-        //translateToCPP(CLEAN_FILE, FINAL_FILE);      <--- uncomment this when translateToCPP.h is working correctly
+        translateToCPP(CLEAN_FILE, FINAL_FILE);
         cout << "\nPress Enter to run C++ File!\n";
         cin.get();
         system("g++ resources/finalv3.cpp -o resources/finalv3");
