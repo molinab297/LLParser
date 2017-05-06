@@ -149,7 +149,7 @@ bool PredictiveParser::trace(string inputString){
             string tableValue = table[topIndex][symbolIndex];
 
             cout << " [" << top << "," << currentChar << "] = " << tableValue << endl;
-            cout << "top index : " << topIndex << " anddddd " <<  " symbolIndex  " << symbolIndex << endl;
+            cout << "top index : " << topIndex << " and " <<  " symbolIndex  " << symbolIndex << endl;
 
 
             if(tableValue != "l") { // If lambda, don't push.
