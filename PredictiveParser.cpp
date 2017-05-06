@@ -26,7 +26,7 @@ PredictiveParser::~PredictiveParser() {
 bool PredictiveParser::validateCode(string inputStringFileName) {
     std::ifstream inFile(inputStringFileName);
     std::string inputString, line;
-    std::regex varLineMatch("i:(.*);b"), varMatch("[PQRS]+[0-9]*[PQRS]*[0-9]*");
+    std::regex varLineMatch("(.*);i:(.*);b"), varMatch("[PQRS]+[0-9]*[PQRS]*[0-9]*");
     std::unordered_map<string,string> reservedWords{{"BEGIN","b"},{"END.","e"},{"PRINT","p"},{"INTEGER","i"},{"PROGRAM","r"}};
 
     // Converts reserved words to single letter terminals
@@ -53,7 +53,7 @@ bool PredictiveParser::validateCode(string inputStringFileName) {
     if(trace(inputString)) {
 
         // Special case : handles undeclared variables
-        std::unordered_set<string> set{"S2017"};
+        std::unordered_set<string> set{};
         std::smatch match;
         std::string line;
         if(regex_search(inputString,match,varLineMatch)){
@@ -68,7 +68,7 @@ bool PredictiveParser::validateCode(string inputStringFileName) {
             // Scan input string and look for undeclared identifiers
             while(regex_search(inputString, match, varMatch)){
                 if(set.find(match.str()) == set.end()) {
-                    cout << "ERROR : Undeclared identifier";
+                    cout << "ERROR: Unknown identifier";
                     return false;
                 }
                 inputString = match.suffix().str();
@@ -78,6 +78,7 @@ bool PredictiveParser::validateCode(string inputStringFileName) {
     }
     return false;
 }
+
 
 /* Loads dictionary with both terminal and non-terminal characters. The value to each terminal/non-terminal
  * character in the dictionary is the corresponding row or column of that character. */
@@ -148,7 +149,7 @@ bool PredictiveParser::trace(string inputString){
             string tableValue = table[topIndex][symbolIndex];
 
             cout << " [" << top << "," << currentChar << "] = " << tableValue << endl;
-            cout << "top index : " << topIndex << " anddddd " <<  " symbolIndex  " << symbolIndex << endl;
+            cout << "top index : " << topIndex << " and " <<  " symbolIndex  " << symbolIndex << endl;
 
 
             if(tableValue != "l") { // If lambda, don't push.
@@ -234,6 +235,9 @@ void PredictiveParser::getErrorMessage(char key, char topStack) {
         default:
             if(topStack == 'b'){
                 cout << "BEGIN is expected";
+            }
+            else if (topStack == 'C'){
+                cout << "; is missing";
             }
             else{
                 cout << " default case: ";
