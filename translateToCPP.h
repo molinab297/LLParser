@@ -11,11 +11,11 @@ using namespace std;
 
 void translateToCPP(string inFileName, string outFileName){
 
-    ofstream fout(inFileName);
-    ifstream fin(outFileName);
+    ofstream fout(outFileName);
+    ifstream fin(inFileName);
     string temp;
     string fileString;
-    regex expression("[A-Za-z]+[0-9]*[A-Za-z]*|-?[0-9]+;|[*/+-=,()]");
+    regex expression("[A-Za-z]+[.]?[0-9]*[A-Za-z]*|-?[0-9]+;?|[*/+-=,()]");
     while (!fin.eof())
     {
         getline(fin, temp);
@@ -27,6 +27,7 @@ void translateToCPP(string inFileName, string outFileName){
 
     while (rit != rend)
     {
+        cout << "rit:   " << rit->str() << endl;
         if (rit->str() == "PROGRAM")
         {
             cout << "#include <iostream>\nusing namespace std;\nint main()\n{";
@@ -40,7 +41,7 @@ void translateToCPP(string inFileName, string outFileName){
             }
 
         }
-        else if (rit->str() == "END")
+        else if (rit->str() == "END.")
         {
             cout << "return 0;\n}" << endl;
             fout << "return 0;\n}" << endl;
@@ -75,7 +76,7 @@ void translateToCPP(string inFileName, string outFileName){
                 cout << "endl;" << endl;
                 cout << "    ";
                 fout << "endl;" << endl;
-                fout << "endl;" << endl;
+                //fout << "endl;" << endl;
             }
         }
         else if (rit->str() != ":" && rit->str() != "BEGIN")
