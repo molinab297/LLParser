@@ -232,6 +232,9 @@ void PredictiveParser::getErrorMessage(char key, char topStack) {
         case 'b' :
             cout << "INTEGER is expected";
             break;
+        case 'Y':
+            cout << "( is missing";
+            break;
         default:
             if(topStack == 'b'){
                 cout << "BEGIN is expected";
