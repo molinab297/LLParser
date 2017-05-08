@@ -237,7 +237,10 @@ void PredictiveParser::getErrorMessage(char key, char topStack) {
                 cout << "BEGIN is expected";
             }
             else if (topStack == 'C'){
-                cout << "; is missing";
+                if(key == '=')
+                    cout << "PRINT is expected";
+                else
+                    cout << "; is missing";
             }
             else{
                 cout << " default case: ";
