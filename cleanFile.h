@@ -46,8 +46,6 @@ void cleanFile(string inputFile, string outputFile, regex regexExpression){
     //BEGIN statement
     while(rit != rend){
 
-        std::cout << rit->str() << '\n';
-
         if(rit->str().substr(0,2) != "//")
             oFile << rit->str() << ' ';
         if(rit->str() == ";" || rit->str() == "BEGIN")

@@ -122,15 +122,12 @@ bool PredictiveParser::trace(string inputString){
 
     while(!stack.empty()){
 
-        printStackContents(stack);
-
         char top = stack.top();
         int topIndex  = getRowIndex(top);
         stack.pop();
 
 
         if(top == currentChar) {
-            cout << "match " << currentChar << endl;
 
             if(currentChar == 'e') // if the match is a e, we know the input string is valid
                 return true;
@@ -138,23 +135,16 @@ bool PredictiveParser::trace(string inputString){
             symbolIndex = getColIndex(currentChar);
         }
         else{
-                if(topIndex == -1 || symbolIndex == -1){
-                    cout << " top key is " << stack.top() << endl;
+            if(topIndex == -1 || symbolIndex == -1){
                 getErrorMessage(stack.top(), top);
-
                 return false;
             }
 
             // Grab value from table
             string tableValue = table[topIndex][symbolIndex];
 
-            cout << " [" << top << "," << currentChar << "] = " << tableValue << endl;
-            cout << "top index : " << topIndex << " and " <<  " symbolIndex  " << symbolIndex << endl;
-
-
             if(tableValue != "l") { // If lambda, don't push.
                 if(tableValue == "n") { // n stands for 'no value'. If n is found, then the input string is invalid.
-                    cout << "the key is " << stack.top() << endl;
                     getErrorMessage(stack.top(), top);
                     return false;
                 }
@@ -194,17 +184,16 @@ int PredictiveParser::getColIndex(char key) {
     if(got != colDict.end()) {
         return colDict.at(key);
     }
-//        //check if symbol is a letter, if so set to last col of table
-//    else{
-//        return colDict.size();
-//    }
     else
         return -1;
 }
 
 void PredictiveParser::getErrorMessage(char key, char topStack) {
 
+    cout << "ERROR: ";
+
     switch(key){
+
         case '1':
             cout << "PROGRAM is expected";
             break;
@@ -246,10 +235,7 @@ void PredictiveParser::getErrorMessage(char key, char topStack) {
                     cout << "; is missing";
             }
             else{
-                cout << " default case: ";
                 cout << topStack << " is missing";
             }
-
     }
-
 }
