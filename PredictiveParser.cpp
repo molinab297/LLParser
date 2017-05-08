@@ -224,7 +224,7 @@ void PredictiveParser::getErrorMessage(char key, char topStack) {
             cout << "illegal expression";
             break;
         case '7':
-            cout << "invalid character";
+            cout << "unknown error";
             break;
         case 'e':
             cout << "END. is expected";
@@ -233,7 +233,7 @@ void PredictiveParser::getErrorMessage(char key, char topStack) {
             cout << "INTEGER is expected";
             break;
         case 'Y':
-            cout << "( is missing";
+            cout << "illegal expression";
             break;
         default:
             if(topStack == 'b'){
