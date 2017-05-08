@@ -40,7 +40,7 @@ bool PredictiveParser::validateCode(string inputStringFileName) {
             int rWordCount = std::distance(std::sregex_iterator(tempLine.begin(), tempLine.end(), varMatch), std::sregex_iterator());        // count number of reserved words
             int commaCount = std::distance(std::sregex_iterator(tempLine.begin(), tempLine.end(), std::regex(",")), std::sregex_iterator()); // count number of commas
             if (commaCount < rWordCount-1){ // if # of commas is less than # of reserved words, output error
-                cout << "ERROR : Missing comma";
+                cout << "error: missing ,";
                 return false;
             }
             // strip white space from line and append to input string
@@ -68,7 +68,7 @@ bool PredictiveParser::validateCode(string inputStringFileName) {
             // Scan input string and look for undeclared identifiers
             while(regex_search(inputString, match, varMatch)){
                 if(set.find(match.str()) == set.end()) {
-                    cout << "ERROR: Unknown identifier";
+                    cout << "error: unknown identifier";
                     return false;
                 }
                 inputString = match.suffix().str();
@@ -190,7 +190,7 @@ int PredictiveParser::getColIndex(char key) {
 
 void PredictiveParser::getErrorMessage(char key, char topStack) {
 
-    cout << "ERROR: ";
+    cout << "error: ";
 
     switch(key){
 
@@ -201,10 +201,10 @@ void PredictiveParser::getErrorMessage(char key, char topStack) {
             cout << "INTEGER is expected";
             break;
         case '3':
-            cout << "Unacceptable variable name";
+            cout << "unacceptable variable name";
             break;
         case '4':
-            cout << "Variable is expected";
+            cout << "variable is expected";
             break;
         case '5':
             cout << "; is missing";
