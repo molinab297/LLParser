@@ -9,7 +9,6 @@
 #include <regex>
 using namespace std;
 
-
 class PredictiveParser {
 public:
     PredictiveParser(int rows, int columns, string terminalsFileName, string nonterminalsFileName, string parsingTableName);
@@ -32,6 +31,5 @@ private:
     std::unordered_map<char,int> colDict;
     std::unordered_map<int, string> errorCodesDict;
 };
-
 
 #endif //FINAL_PROJECT_COMPILERS_PREDICTIVEPARSER_H

@@ -136,7 +136,11 @@ bool PredictiveParser::trace(string inputString){
         }
         else{
             if(topIndex == -1 || symbolIndex == -1){
-                getErrorMessage(stack.top(), top);
+                if(currentChar == ')')
+                    getErrorMessage(stack.top(), '(');
+                else
+                    getErrorMessage(stack.top(), top);
+
                 return false;
             }
 
@@ -188,6 +192,7 @@ int PredictiveParser::getColIndex(char key) {
         return -1;
 }
 
+/* outputs the appropriate error message based on parsing table values */
 void PredictiveParser::getErrorMessage(char key, char topStack) {
 
     cout << "error: ";
@@ -210,19 +215,14 @@ void PredictiveParser::getErrorMessage(char key, char topStack) {
             cout << "; is missing";
             break;
         case '6':
-            cout << "illegal expression";
-            break;
         case '7':
-            cout << "unknown error";
+            cout << "illegal expression";
             break;
         case 'e':
             cout << "END. is expected";
         break;
         case 'b' :
             cout << "INTEGER is expected";
-            break;
-        case 'Y':
-            cout << "illegal expression";
             break;
         default:
             if(topStack == 'b'){

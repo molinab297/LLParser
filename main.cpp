@@ -14,13 +14,17 @@ int main() {
     //output clean version of original input file to new file
     cleanFile(INPUT_FILE, CLEAN_FILE, REGULAR_EXPRESSION);
 
+    //initialize the parsing table
     PredictiveParser parser(NUM_ROWS, NUM_COLS, TERMINALS_FILE, NONTERMINALS_FILE, PARSING_TABLE_FILE);
 
+    //run the contents of the clean file through the parsing table, and if the code is validated
+    //translate it to C++, then compile and run it
     if(parser.validateCode(CLEAN_FILE)) {
-        cout << "\nReady to be translated to C++";
+        cout << "\nNo error.\n\nTranslating to C++ ...";
         translateToCPP(CLEAN_FILE, FINAL_FILE);
-        cout << "\nPress Enter to run C++ File!\n";
+        cout << "\n\nPress Enter to run C++ File!";
         cin.get();
+        cout << "Output:\n\n";
         system("g++ resources/finalv3.cpp -o resources/finalv3");
         system("./resources/finalv3");
     }
