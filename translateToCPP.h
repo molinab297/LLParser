@@ -1,3 +1,8 @@
+/**
+    translateToCPP.h
+
+    Purpose: Accepts an input file then rewrites it to passed in outfile translated to C++
+*/
 
 #ifndef FINAL_PROJECT_COMPILERS_TRANSLATETOCPP_H
 #define FINAL_PROJECT_COMPILERS_TRANSLATETOCPP_H
