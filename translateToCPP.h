@@ -48,11 +48,11 @@ void translateToCPP(string inFileName, string outFileName){
         }
         else if (rit->str() == "INTEGER")
         {
-            fout << "    int ";
+            fout << "\tint ";
         }
         else if (rit->str() == ";")
         {
-            fout << "; " << endl;
+            fout << ";\n\t";
         }
         else if (rit->str() == "PRINT")
         {
@@ -68,7 +68,7 @@ void translateToCPP(string inFileName, string outFileName){
             }
             if (rit->str() == ";")
             {
-                fout << "endl;" << endl;
+                fout << "endl;\n\t";
             }
         }
         else if (rit->str() != ":" && rit->str() != "BEGIN")
