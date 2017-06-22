@@ -1,8 +1,8 @@
-# Final Project - Compilers CPSC 323 
+# LL(1) Parser
 
-This program translates a custom language (using an LL parser) to C++ code. The C++ code (an executable) is then ran and output to the console of the program.
+This program translates a custom language (using an LL parser) to C++ code. The C++ code (an executable) is then ran and output to the console.
 
-Team Members:
+Project Members:
 - Matt Corrente
 - Blake Molina
 - Amado Flores
